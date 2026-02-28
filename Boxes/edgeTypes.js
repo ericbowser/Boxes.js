@@ -39,10 +39,12 @@ export const EDGE_OPTIONS = [
  * @param {number} opts.thickness - Material thickness in mm
  * @param {boolean} opts.isTabs - true=tabs protrude, false=slots recede
  * @param {number} opts.surroundingSpaces - Flat margin multiplier
+ * @param {number} [opts.play=0] - Joint clearance offset (mm). Shrinks tabs inward.
  * @returns {{ path: string, cx: number, cy: number }}
  */
 export function fingerEdgePath({
   cx, cy, length, dir, fingerWidth, thickness, isTabs, surroundingSpaces,
+  play = 0,
 }) {
   const { ax, ay, px, py } = DIR[dir];
 
@@ -69,12 +71,22 @@ export function fingerEdgePath({
   for (let i = 0; i < nInner; i++) {
     const isTab = isTabs ? (i % 2 === 0) : (i % 2 === 1);
     if (isTab) {
+      // Advance by play (flat gap before tab)
+      if (play > 0) {
+        cx += ax * play; cy += ay * play;
+        path += `L ${r(cx)} ${r(cy)} `;
+      }
       cx += px * thickness; cy += py * thickness;
       path += `L ${r(cx)} ${r(cy)} `;
-      cx += ax * innerFW; cy += ay * innerFW;
+      cx += ax * (innerFW - 2 * play); cy += ay * (innerFW - 2 * play);
       path += `L ${r(cx)} ${r(cy)} `;
       cx -= px * thickness; cy -= py * thickness;
       path += `L ${r(cx)} ${r(cy)} `;
+      // Advance by play (flat gap after tab)
+      if (play > 0) {
+        cx += ax * play; cy += ay * play;
+        path += `L ${r(cx)} ${r(cy)} `;
+      }
     } else {
       cx += ax * innerFW; cy += ay * innerFW;
       path += `L ${r(cx)} ${r(cy)} `;
@@ -120,12 +132,14 @@ export function straightEdgePath({ cx, cy, length, dir }) {
  * @param {boolean} opts.stackable - If true, holes flush to panel edge
  * @param {number} opts.edgeWidth - Distance from edge to holes (×thickness)
  * @param {number} opts.surroundingSpaces - Flat margin multiplier
+ * @param {number} [opts.play=0] - Joint clearance offset (mm). Expands holes outward.
  * @returns {Array<{x: number, y: number, w: number, h: number}>}
  */
 export function generateEdgeHoles({
   panelX, panelY, panelW, panelH,
   edge, edgeLength, fingerWidth, thickness,
   stackable, edgeWidth, surroundingSpaces,
+  play = 0,
 }) {
   // Mirror fingerEdgePath spacing math
   const nBase = calcFingerCount(edgeLength, fingerWidth);
@@ -142,7 +156,9 @@ export function generateEdgeHoles({
   for (let i = 0; i < n; i++) {
     if (i % 2 !== 0) continue;
 
-    const pos = surSpace + i * fw;
+    // Expand hole position/size by play for clearance
+    const pos = surSpace + i * fw - play;
+    const fwPlay = fw + 2 * play;
     let hx, hy, hw, hh;
 
     switch (edge) {
@@ -151,24 +167,24 @@ export function generateEdgeHoles({
         hy = stackable
           ? panelY + panelH - holeDepth
           : panelY + panelH - edgeOffset - holeDepth;
-        hw = fw; hh = holeDepth;
+        hw = fwPlay; hh = holeDepth;
         break;
       case "top":
         hx = panelX + pos;
         hy = stackable ? panelY : panelY + edgeOffset;
-        hw = fw; hh = holeDepth;
+        hw = fwPlay; hh = holeDepth;
         break;
       case "left":
         hx = stackable ? panelX : panelX + edgeOffset;
         hy = panelY + pos;
-        hw = holeDepth; hh = fw;
+        hw = holeDepth; hh = fwPlay;
         break;
       case "right":
         hx = stackable
           ? panelX + panelW - holeDepth
           : panelX + panelW - edgeOffset - holeDepth;
         hy = panelY + pos;
-        hw = holeDepth; hh = fw;
+        hw = holeDepth; hh = fwPlay;
         break;
     }
     holes.push({ x: r(hx), y: r(hy), w: r(hw), h: r(hh) });

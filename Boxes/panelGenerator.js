@@ -29,11 +29,13 @@ import {
  * @param {number} opts.thickness - Material thickness (mm)
  * @param {number} opts.edgeWidth - Hole inset distance (×thickness)
  * @param {number} opts.surroundingSpaces - Flat margin multiplier
+ * @param {number} [opts.play=0] - Joint clearance offset (mm)
  * @returns {{ outline: string, holes: Array }}
  */
 export function generatePanel({
   x, y, w, h, edges,
   fingerWidth, thickness, edgeWidth, surroundingSpaces,
+  play = 0,
 }) {
   let cx = x, cy = y;
   let outline = `M ${r(cx)} ${r(cy)} `;
@@ -52,7 +54,7 @@ export function generatePanel({
         cx, cy, length: len, dir,
         fingerWidth, thickness,
         isTabs: et === "F-tabs",
-        surroundingSpaces,
+        surroundingSpaces, play,
       });
     } else {
       res = straightEdgePath({ cx, cy, length: len, dir });
@@ -70,7 +72,7 @@ export function generatePanel({
           edge: edgeName, edgeLength: len,
           fingerWidth, thickness,
           stackable: et === "s",
-          edgeWidth, surroundingSpaces,
+          edgeWidth, surroundingSpaces, play,
         })
       );
     }

@@ -1,0 +1,37 @@
+{
+  "name": "boxes",
+  "version": "1.0.0",
+  "description": "A box web app similar to Boxes.py ;]",
+  "keywords": [
+    "boxes",
+    "svg"
+  ],
+  "homepage": "https://github.com/ericbowser/Boxes.js#readme",
+  "bugs": {
+    "url": "https://github.com/ericbowser/Boxes.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericbowser/Boxes.js.git"
+  },
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@vitejs/plugin-react": "^5.1.4",
+    "express": "^4.21.2",
+    "jsx-runtime": "^1.2.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-jsx-runtime": "^1.0.0-alpha.1",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "license": "GPL-3.0",
+  "author": "E.R.B.",
+  "type": "commonjs",
+  "main": "index.js"
+}

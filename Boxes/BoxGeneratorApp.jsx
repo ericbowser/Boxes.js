@@ -34,7 +34,7 @@ export default function BoxGeneratorApp() {
   const [params, setParams] = useState({
     width: 100, height: 60, depth: 80,
     thickness: 3, fingerWidth: 10, kerf: 0.15,
-    edgeWidth: 1.5, surroundingSpaces: 1,
+    edgeWidth: 1.5, surroundingSpaces: 1, play: 0,
     bottomEdge: "h", topEdge: "e",
   });
   const [zoom, setZoom] = useState(1.6);
@@ -110,6 +110,9 @@ export default function BoxGeneratorApp() {
 
           <Slider label="Surround Space" value={params.surroundingSpaces} onChange={v => set("surroundingSpaces", v)} min={0} max={4} step={0.1} unit="×" />
           <Hint>= {surMM}mm flat margin at start + end of joints</Hint>
+
+          <Slider label="Play" value={params.play} onChange={v => set("play", v)} min={0} max={0.5} step={0.01} unit="mm" />
+          <Hint>Joint clearance: tabs shrink, holes expand by {r(params.play)}mm/side</Hint>
 
           <Slider label="Edge Width" value={params.edgeWidth} onChange={v => set("edgeWidth", v)} min={0.5} max={5} step={0.1} unit="×T" />
           <Hint>= {r(params.edgeWidth * params.thickness)}mm from panel edge to holes</Hint>
