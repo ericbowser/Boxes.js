@@ -70,6 +70,6 @@ Geometry engine has been validated with physical test cuts on 3mm acrylic using 
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+GPL-3.0
 
 © 2026 Eric Bowser / Execute & Engrave LLC
